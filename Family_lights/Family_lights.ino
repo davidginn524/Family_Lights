@@ -5,13 +5,13 @@
 // Update these with values suitable for your network.
 byte mac[] = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress ip(10,0,0,5);
-const char* server = “m23.cloudmqtt.com”;
+const char* server = "m23.cloudmqtt.com";
 const int mqttPort = 17393;
-const char* mqttUser = “----”;
-const char* mqttPassword = “----”;
+const char* mqttUser = "--";
+const char* mqttPassword = "--";
 
 void callback(char* topic, byte* payload, unsigned int length) {
-Serial.print(“Message arrived [”);
+Serial.print("Message arrived [");
 Serial.print(topic);
 Serial.print("] ");
 for (int i=0;i<length;i++) {
@@ -26,16 +26,16 @@ PubSubClient client(ethClient);
 void reconnect() {
 // Loop until we’re reconnected
 while (!client.connected()) {
-Serial.print(“Attempting MQTT connection…”);
+Serial.print("Attempting MQTT connection…");
 // Attempt to connect
 if (client.connect("")) {
-Serial.println(“connected”);
+Serial.println("connected");
 // Once connected, publish an announcement…
-client.publish(“outTopic”,“hello”);
+client.publish("outTopic","hello");
 // … and resubscribe
-client.subscribe(“inTopic”);
+client.subscribe("inTopic");
 } else {
-Serial.print(“failed, rc=”);
+Serial.print("failed, rc=");
 Serial.print(client.state());
 Serial.println(" try again in 5 seconds");
 // Wait 5 seconds before retrying
