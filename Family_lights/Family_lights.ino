@@ -6,6 +6,7 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 
+
 const char* mqttServer = "m23.cloudmqtt.com";
 const int mqttPort = 16743;
 const char* mqttUser = "crjhzcfb";
@@ -29,16 +30,10 @@ void setup() {
   Serial.begin(115200);
   
   // We start by connecting to a WiFi network
-  WiFiManager MyWifiManager;
-  MyWifiManager.autoConnect("Family_Lamps");
-//  WiFi.begin(ssid, password);
-//  Serial.println("Connecting to WiFi..");
-//  while (WiFi.status() != WL_CONNECTED) {
-//    delay(500);
-//    Serial.print(".");
-//  }
-//  Serial.println("Connected to the WiFi network");
-// 
+   WiFiManager MyWifiManager;
+   MyWifiManager.autoConnect("WeatherFrame");
+  Serial.println("Connected to the WiFi network");
+ 
   client.setServer(mqttServer, mqttPort);
   client.setCallback(callback);
  
