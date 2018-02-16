@@ -16,7 +16,7 @@ const char* mqttPassword = "OgX58L0IebEa";
 WiFiClient espClient;
 PubSubClient client(espClient);
 //cleint ID for hashing and debuging 
-const char* CELINT_ID = "1";
+const char* CLIENT_ID = "1";
 
   
 //define button pin and setup debounce
@@ -67,7 +67,7 @@ void setup() {
   }
 
   //publishes client id and subscribes to colors 
-  client.publish("Family_Lamps/Client_ID", CELINT_ID);
+  client.publish("Family_Lamps/Client_ID", CLIENT_ID);
   client.subscribe("Family_Lamps/Incoming_Colors");
 
 
@@ -82,7 +82,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
   for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
   }
- 
+  Serial.println(); 
+
+    if (payload[0] == '2' )
+    Serial.println("it made it");
+    {Serial.println(payload[0]);
+      
+      }
+
+  
+
+
   Serial.println();
   Serial.println("-----------------------");
  
@@ -90,14 +100,23 @@ void callback(char* topic, byte* payload, unsigned int length) {
  
 void loop() {
   client.loop();
+  String CID= String(CLIENT_ID);
+  String randomred = String(random(255));
+  String randomgreen  = String(random(255));
+  String randomblue = String(random(255));
+  String Color_Value = String(CID+"G"+ randomgreen +"R"+randomred +"B"+randomblue);
+  char Client_Hash[30];
+  Color_Value.toCharArray(Client_Hash, 30);
+   
   buttonState = digitalRead(BUTTON_PIN);
     if ( (millis() - lastDebounceTime) > debounceDelay) 
     {
- 
+      
       //if the button has been pressed, lets toggle the LED from "off to on" or "on to off"
       if (buttonState == LOW) 
       {
-        client.publish("Family_Lamps/Incoming_Colors", "button press");
+        client.publish("Family_Lamps/Incoming_Colors",Client_Hash );
+ 
         lastDebounceTime = millis(); //set the current time
       }
 
