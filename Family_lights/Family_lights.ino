@@ -7,6 +7,7 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 
+
 //mqtt server variables 
 const char* mqttServer = "m23.cloudmqtt.com";
 const int mqttPort = 16743;
@@ -15,8 +16,9 @@ const char* mqttPassword = "OgX58L0IebEa";
  
 WiFiClient espClient;
 PubSubClient client(espClient);
-//cleint ID for hashing and debuging 
+//cleint ID for hashing and debuging set both to the same 
 const char* CLIENT_ID = "1";
+char CLIENT_ID_INT = '1';
 
   
 //define button pin and setup debounce
@@ -53,7 +55,7 @@ void setup() {
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
  
-    if (client.connect("ESP8266Client", mqttUser, mqttPassword )) {
+    if (client.connect(CLIENT_ID, mqttUser, mqttPassword )) {
  
       Serial.println("connected");  
  
@@ -83,12 +85,16 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   Serial.println(); 
-
-    if (payload[0] == '2' )
-    Serial.println("it made it");
-    {Serial.println(payload[0]);
-      
-      }
+    Serial.println((char)payload[0]);
+    Serial.println(CLIENT_ID_INT);
+    if (payload[0] == CLIENT_ID_INT )
+    {Serial.println("I published the hash");
+     Serial.println(payload[0]);
+    }
+    else 
+    {
+      Serial.println("Someone else published the hash");
+    }
 
   
 
