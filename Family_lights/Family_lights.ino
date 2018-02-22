@@ -30,19 +30,20 @@ long debounceDelay = 150;    // the debounce time; increase if the output flicke
  
 //setup of neopixels
 #define PIXEL_PIN       12                      // Pin connected to the NeoPixel data input.
-#define PIXEL_COUNT     9                     // Number of NeoPixels.
+#define PIXEL_COUNT     16                    // Number of NeoPixels.
 #define PIXEL_TYPE      NEO_GRB + NEO_KHZ800   // Type of the NeoPixels (see strandtest example).
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE); // create NeoPixels object
-
-
+//setup int for checking if LEDs have been lit previously
+unsigned int previouslylit;
 
 void setup() {
+  pixels.begin();
+  pixels.show();
+
   // initialize the pushbutton pin as an input:
   pinMode(BUTTON_PIN, INPUT);
   // Initialize NeoPixels 
-  pixels.begin();
-  pixels.setPixelColor(0, 0, 0, 0);
-  pixels.show();
+ 
   Serial.begin(115200);
   
   // We start by connecting to a WiFi network
@@ -77,50 +78,71 @@ void setup() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
- 
+
   Serial.print("Message arrived in topic: ");
   Serial.println(topic);
  
   Serial.print("Message:");
-  for (int i = 0; i < length; i++) {
-    
+  for (int i = 0; i < length; i++) 
+  {
     Serial.print((char)payload[i]);
   }
-  Serial.println(" ");
-  Serial.print("Payload Array 0 = "); 
-    Serial.println((char)payload[0]);
-    Serial.println(CLIENT_ID_INT);
+   Serial.println(" ");
+   //Serial.print("Payload Array 0 = "); 
+   // Serial.println((char)payload[0]);
+   // Serial.println(CLIENT_ID_INT);
+   //i published the hash 
     if (payload[0] == CLIENT_ID_INT )
     {Serial.println("I published the hash");
      Serial.println(payload[0]);
-     int count = 0;
-     while (count <= 5)
-     {
-     
-     count++;
-     Serial.println(count);
-     }
+     //Since I was the one that published the hash do rainbow cycle for a few sec then change to the generated random color 
     }
-    else 
+    else
+    //someone else published the hash 
     {
-    int i = 0; 
-    for (int i=0; i<PIXEL_COUNT; ++i) 
-    {
-      pixels.setPixelColor(i, 255,255,255);
-      Serial.println (i);
-    }    
-  
-    
-    pixels.show();
-      Serial.println("Someone else published the hash");
+      Serial.println(previouslylit);
+      //if previously lit fade out current color then fade in new color 
+      if (previouslylit == 1) 
+      {
+         for (int light = 255; light>=0; --light)
+        {
+          for (int i=0; i<PIXEL_COUNT; ++i) 
+          {
+            pixels.setPixelColor(i, payload[2], payload[6], payload[8]);
+           // Serial.println (i);
+          }   
+          pixels.setBrightness(light);
+          Serial.println (light);
+          pixels.show();
+          delay(20);
+        }
+           previouslylit = 1;
+          Serial.println("Previously lit");
+          Serial.println("Someone else published the hash");
+      }
+      //if not previously lit fade in new color 
+      else
+      {
+        for (int light = 0; light<=255; ++light)
+        {
+          for (int i=0; i<PIXEL_COUNT; ++i) 
+          {
+            pixels.setPixelColor(i, payload[2], payload[6], payload[8]);
+           // Serial.println (i);
+          }   
+          pixels.setBrightness(light);
+          //Serial.println (light);
+          pixels.show();
+          delay(20);
+        }
+          previouslylit = 1;
+          Serial.println(previouslylit);
+          Serial.println("not lit");
+          Serial.println("Someone else published the hash");
+      }
     }
-
-  
-
-
   Serial.println();
   Serial.println("-----------------------");
- 
 }
  
 void loop() {
