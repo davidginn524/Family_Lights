@@ -8,7 +8,7 @@
 #include <ESP8266WebServer.h>
 
 
-//mqtt server variables 
+//mqtt server variables test variables to be decom later
 const char* mqttServer = "m23.cloudmqtt.com";
 const int mqttPort = 16743;
 const char* mqttUser = "crjhzcfb";
