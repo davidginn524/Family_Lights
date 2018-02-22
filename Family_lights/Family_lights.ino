@@ -29,8 +29,8 @@ long debounceDelay = 150;    // the debounce time; increase if the output flicke
 
  
 //setup of neopixels
-#define PIXEL_PIN       16                      // Pin connected to the NeoPixel data input.
-#define PIXEL_COUNT     21                      // Number of NeoPixels.
+#define PIXEL_PIN       12                      // Pin connected to the NeoPixel data input.
+#define PIXEL_COUNT     9                     // Number of NeoPixels.
 #define PIXEL_TYPE      NEO_GRB + NEO_KHZ800   // Type of the NeoPixels (see strandtest example).
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE); // create NeoPixels object
 
@@ -82,17 +82,34 @@ void callback(char* topic, byte* payload, unsigned int length) {
  
   Serial.print("Message:");
   for (int i = 0; i < length; i++) {
+    
     Serial.print((char)payload[i]);
   }
-  Serial.println(); 
+  Serial.println(" ");
+  Serial.print("Payload Array 0 = "); 
     Serial.println((char)payload[0]);
     Serial.println(CLIENT_ID_INT);
     if (payload[0] == CLIENT_ID_INT )
     {Serial.println("I published the hash");
      Serial.println(payload[0]);
+     int count = 0;
+     while (count <= 5)
+     {
+     
+     count++;
+     Serial.println(count);
+     }
     }
     else 
     {
+    int i = 1; 
+    while (i <= PIXEL_COUNT) 
+    {
+      pixels.setPixelColor( i, 255,255,255);
+      Serial.println (i);
+      i++;   
+    }
+    pixels.show();
       Serial.println("Someone else published the hash");
     }
 
@@ -128,3 +145,6 @@ void loop() {
 
     }
 }
+
+
+
