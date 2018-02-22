@@ -22,7 +22,7 @@ char CLIENT_ID_INT = '1';
 
   
 //define button pin and setup debounce
-const int BUTTON_PIN = 0;
+int BUTTON_PIN = 0;
 int buttonState = 0;
 long lastDebounceTime = 0;  // the last time the output pin was toggled
 long debounceDelay = 150;    // the debounce time; increase if the output flickers
@@ -41,7 +41,8 @@ void setup() {
   pinMode(BUTTON_PIN, INPUT);
   // Initialize NeoPixels 
   pixels.begin();
-  
+  pixels.setPixelColor(0, 0, 0, 0);
+  pixels.show();
   Serial.begin(115200);
   
   // We start by connecting to a WiFi network
@@ -102,13 +103,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
     else 
     {
-    int i = 1; 
-    while (i <= PIXEL_COUNT) 
+    int i = 0; 
+    for (int i=0; i<PIXEL_COUNT; ++i) 
     {
-      pixels.setPixelColor( i, 255,255,255);
+      pixels.setPixelColor(i, 255,255,255);
       Serial.println (i);
-      i++;   
-    }
+    }    
+  
+    
     pixels.show();
       Serial.println("Someone else published the hash");
     }
@@ -145,6 +147,5 @@ void loop() {
 
     }
 }
-
 
 
